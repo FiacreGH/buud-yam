@@ -1,0 +1,726 @@
+/*! PhotoSwipe main CSS by Dmitry Semenov | photoswipe.com | MIT license */
+/*
+	Styles for basic PhotoSwipe functionality (sliding area, open/close transitions)
+*/
+/* pswp = photoswipe */
+.pswp {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  -ms-touch-action: none;
+  touch-action: none;
+  z-index: 1500;
+  -webkit-text-size-adjust: 100%;
+  /* create separate layer, to avoid paint on window.onscroll in webkit/blink */
+  -webkit-backface-visibility: hidden;
+  outline: none; }
+  .pswp * {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box; }
+  .pswp img {
+    max-width: none; }
+
+/* style is added when JS option showHideOpacity is set to true */
+.pswp--animate_opacity {
+  /* 0.001, because opacity:0 doesn't trigger Paint action, which causes lag at start of transition */
+  opacity: 0.001;
+  will-change: opacity;
+  /* for open/close transition */
+  -webkit-transition: opacity 333ms cubic-bezier(0.4, 0, 0.22, 1);
+          transition: opacity 333ms cubic-bezier(0.4, 0, 0.22, 1); }
+
+.pswp--open {
+  display: block; }
+
+.pswp--zoom-allowed .pswp__img {
+  /* autoprefixer: off */
+  cursor: -webkit-zoom-in;
+  cursor: -moz-zoom-in;
+  cursor: zoom-in; }
+
+.pswp--zoomed-in .pswp__img {
+  /* autoprefixer: off */
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  cursor: grab; }
+
+.pswp--dragging .pswp__img {
+  /* autoprefixer: off */
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+  cursor: grabbing; }
+
+/*
+	Background is added as a separate element.
+	As animating opacity is much faster than animating rgba() background-color.
+*/
+.pswp__bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0;
+  -webkit-backface-visibility: hidden;
+  will-change: opacity; }
+
+.pswp__scroll-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; }
+
+.pswp__container,
+.pswp__zoom-wrap {
+  -ms-touch-action: none;
+  touch-action: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0; }
+
+/* Prevent selection and tap highlights */
+.pswp__container,
+.pswp__img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none; }
+
+.pswp__zoom-wrap {
+  position: absolute;
+  width: 100%;
+  -webkit-transform-origin: left top;
+  -ms-transform-origin: left top;
+  transform-origin: left top;
+  /* for open/close transition */
+  -webkit-transition: -webkit-transform 333ms cubic-bezier(0.4, 0, 0.22, 1);
+          transition: transform 333ms cubic-bezier(0.4, 0, 0.22, 1); }
+
+.pswp__bg {
+  will-change: opacity;
+  /* for open/close transition */
+  -webkit-transition: opacity 333ms cubic-bezier(0.4, 0, 0.22, 1);
+          transition: opacity 333ms cubic-bezier(0.4, 0, 0.22, 1); }
+
+.pswp--animated-in .pswp__bg,
+.pswp--animated-in .pswp__zoom-wrap {
+  -webkit-transition: none;
+  transition: none; }
+
+.pswp__container,
+.pswp__zoom-wrap {
+  -webkit-backface-visibility: hidden;
+  will-change: transform; }
+
+.pswp__item {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: hidden; }
+
+.pswp__img {
+  position: absolute;
+  width: auto;
+  height: auto;
+  top: 0;
+  left: 0; }
+
+/*
+	stretched thumbnail or div placeholder element (see below)
+	style is added to avoid flickering in webkit/blink when layers overlap
+*/
+.pswp__img--placeholder {
+  -webkit-backface-visibility: hidden; }
+
+/*
+	div element that matches size of large image
+	large image loads on top of it
+*/
+.pswp__img--placeholder--blank {
+  background: #222; }
+
+.pswp--ie .pswp__img {
+  width: 100% !important;
+  height: auto !important;
+  left: 0;
+  top: 0; }
+
+/*
+	Error message appears when image is not loaded
+	(JS option errorMsg controls markup)
+*/
+.pswp__error-msg {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  line-height: 16px;
+  margin-top: -8px;
+  color: #CCC; }
+
+.pswp__error-msg a {
+  color: #CCC;
+  text-decoration: underline; }
+
+
+/*! PhotoSwipe Default UI CSS by Dmitry Semenov | photoswipe.com | MIT license */
+/*
+
+	Contents:
+
+	1. Buttons
+	2. Share modal and links
+	3. Index indicator ("1 of X" counter)
+	4. Caption
+	5. Loading indicator
+	6. Additional styles (root element, top bar, idle state, hidden state, etc.)
+
+*/
+/*
+	
+	1. Buttons
+
+ */
+/* <button> css reset */
+.pswp__button {
+  width: 44px;
+  height: 44px;
+  position: relative;
+  background: none;
+  cursor: pointer;
+  overflow: visible;
+  -webkit-appearance: none;
+  display: block;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  float: right;
+  opacity: 0.75;
+  -webkit-transition: opacity 0.2s;
+          transition: opacity 0.2s;
+  -webkit-box-shadow: none;
+          box-shadow: none; }
+  .pswp__button:focus,
+  .pswp__button:hover {
+    opacity: 1; }
+  .pswp__button:active {
+    outline: none;
+    opacity: 0.9; }
+  .pswp__button::-moz-focus-inner {
+    padding: 0;
+    border: 0; }
+
+/* pswp__ui--over-close class it added when mouse is over element that should close gallery */
+.pswp__ui--over-close .pswp__button--close {
+  opacity: 1; }
+
+.pswp__button,
+.pswp__button--arrow--left:before,
+.pswp__button--arrow--right:before {
+  background: url('vhs-assets-css-11a688d628cb793b0088ef3d766c37a3.png') 0 0 no-repeat;
+  background-size: 264px 88px;
+  width: 44px;
+  height: 44px; }
+
+@media (-webkit-min-device-pixel-ratio: 1.1), (-webkit-min-device-pixel-ratio: 1.09375), (min-resolution: 105dpi), (min-resolution: 1.1dppx) {
+  /* Serve SVG sprite if browser supports SVG and resolution is more than 105dpi */
+  .pswp--svg .pswp__button,
+  .pswp--svg .pswp__button--arrow--left:before,
+  .pswp--svg .pswp__button--arrow--right:before {
+    background-image: url('vhs-assets-css-5109860b191b60835286457298fbe7d7.svg'); }
+  .pswp--svg .pswp__button--arrow--left,
+  .pswp--svg .pswp__button--arrow--right {
+    background: none; } }
+
+.pswp__button--close {
+  background-position: 0 -44px; }
+
+.pswp__button--share {
+  background-position: -44px -44px; }
+
+.pswp__button--fs {
+  display: none; }
+
+.pswp--supports-fs .pswp__button--fs {
+  display: block; }
+
+.pswp--fs .pswp__button--fs {
+  background-position: -44px 0; }
+
+.pswp__button--zoom {
+  display: none;
+  background-position: -88px 0; }
+
+.pswp--zoom-allowed .pswp__button--zoom {
+  display: block; }
+
+.pswp--zoomed-in .pswp__button--zoom {
+  background-position: -132px 0; }
+
+/* no arrows on touch screens */
+.pswp--touch .pswp__button--arrow--left,
+.pswp--touch .pswp__button--arrow--right {
+  visibility: hidden; }
+
+/*
+	Arrow buttons hit area
+	(icon is added to :before pseudo-element)
+*/
+.pswp__button--arrow--left,
+.pswp__button--arrow--right {
+  background: none;
+  top: 50%;
+  margin-top: -50px;
+  width: 70px;
+  height: 100px;
+  position: absolute; }
+
+.pswp__button--arrow--left {
+  left: 0; }
+
+.pswp__button--arrow--right {
+  right: 0; }
+
+.pswp__button--arrow--left:before,
+.pswp__button--arrow--right:before {
+  content: '';
+  top: 35px;
+  background-color: rgba(0, 0, 0, 0.3);
+  height: 30px;
+  width: 32px;
+  position: absolute; }
+
+.pswp__button--arrow--left:before {
+  left: 6px;
+  background-position: -138px -44px; }
+
+.pswp__button--arrow--right:before {
+  right: 6px;
+  background-position: -94px -44px; }
+
+/*
+
+	2. Share modal/popup and links
+
+ */
+.pswp__counter,
+.pswp__share-modal {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none; }
+
+.pswp__share-modal {
+  display: block;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  position: absolute;
+  z-index: 1600;
+  opacity: 0;
+  -webkit-transition: opacity 0.25s ease-out;
+          transition: opacity 0.25s ease-out;
+  -webkit-backface-visibility: hidden;
+  will-change: opacity; }
+
+.pswp__share-modal--hidden {
+  display: none; }
+
+.pswp__share-tooltip {
+  z-index: 1620;
+  position: absolute;
+  background: #FFF;
+  top: 56px;
+  border-radius: 2px;
+  display: block;
+  width: auto;
+  right: 44px;
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  -webkit-transform: translateY(6px);
+      -ms-transform: translateY(6px);
+          transform: translateY(6px);
+  -webkit-transition: -webkit-transform 0.25s;
+          transition: transform 0.25s;
+  -webkit-backface-visibility: hidden;
+  will-change: transform; }
+  .pswp__share-tooltip a {
+    display: block;
+    padding: 8px 12px;
+    color: #000;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 18px; }
+    .pswp__share-tooltip a:hover {
+      text-decoration: none;
+      color: #000; }
+    .pswp__share-tooltip a:first-child {
+      /* round corners on the first/last list item */
+      border-radius: 2px 2px 0 0; }
+    .pswp__share-tooltip a:last-child {
+      border-radius: 0 0 2px 2px; }
+
+.pswp__share-modal--fade-in {
+  opacity: 1; }
+  .pswp__share-modal--fade-in .pswp__share-tooltip {
+    -webkit-transform: translateY(0);
+        -ms-transform: translateY(0);
+            transform: translateY(0); }
+
+/* increase size of share links on touch devices */
+.pswp--touch .pswp__share-tooltip a {
+  padding: 16px 12px; }
+
+a.pswp__share--facebook:before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: -12px;
+  right: 15px;
+  border: 6px solid transparent;
+  border-bottom-color: #FFF;
+  -webkit-pointer-events: none;
+  -moz-pointer-events: none;
+  pointer-events: none; }
+
+a.pswp__share--facebook:hover {
+  background: #3E5C9A;
+  color: #FFF; }
+  a.pswp__share--facebook:hover:before {
+    border-bottom-color: #3E5C9A; }
+
+a.pswp__share--twitter:hover {
+  background: #55ACEE;
+  color: #FFF; }
+
+a.pswp__share--pinterest:hover {
+  background: #CCC;
+  color: #CE272D; }
+
+a.pswp__share--download:hover {
+  background: #DDD; }
+
+/*
+
+	3. Index indicator ("1 of X" counter)
+
+ */
+.pswp__counter {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 44px;
+  font-size: 13px;
+  line-height: 44px;
+  color: #FFF;
+  opacity: 0.75;
+  padding: 0 10px; }
+
+/*
+	
+	4. Caption
+
+ */
+.pswp__caption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  min-height: 44px; }
+  .pswp__caption small {
+    font-size: 11px;
+    color: #BBB; }
+
+.pswp__caption__center {
+  text-align: left;
+  max-width: 420px;
+  margin: 0 auto;
+  font-size: 13px;
+  padding: 10px;
+  line-height: 20px;
+  color: #CCC; }
+
+.pswp__caption--empty {
+  display: none; }
+
+/* Fake caption element, used to calculate height of next/prev image */
+.pswp__caption--fake {
+  visibility: hidden; }
+
+/*
+
+	5. Loading indicator (preloader)
+
+	You can play with it here - http://codepen.io/dimsemenov/pen/yyBWoR
+
+ */
+.pswp__preloader {
+  width: 44px;
+  height: 44px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -22px;
+  opacity: 0;
+  -webkit-transition: opacity 0.25s ease-out;
+          transition: opacity 0.25s ease-out;
+  will-change: opacity;
+  direction: ltr; }
+
+.pswp__preloader__icn {
+  width: 20px;
+  height: 20px;
+  margin: 12px; }
+
+.pswp__preloader--active {
+  opacity: 1; }
+  .pswp__preloader--active .pswp__preloader__icn {
+    /* We use .gif in browsers that don't support CSS animation */
+    background: url('vhs-assets-css-88391c51abdb53dd69c75ff139c5f654.gif') 0 0 no-repeat; }
+
+.pswp--css_animation .pswp__preloader--active {
+  opacity: 1; }
+  .pswp--css_animation .pswp__preloader--active .pswp__preloader__icn {
+    -webkit-animation: clockwise 500ms linear infinite;
+            animation: clockwise 500ms linear infinite; }
+  .pswp--css_animation .pswp__preloader--active .pswp__preloader__donut {
+    -webkit-animation: donut-rotate 1000ms cubic-bezier(0.4, 0, 0.22, 1) infinite;
+            animation: donut-rotate 1000ms cubic-bezier(0.4, 0, 0.22, 1) infinite; }
+
+.pswp--css_animation .pswp__preloader__icn {
+  background: none;
+  opacity: 0.75;
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  margin: 0; }
+
+.pswp--css_animation .pswp__preloader__cut {
+  /* 
+			The idea of animating inner circle is based on Polymer ("material") loading indicator 
+			 by Keanu Lee https://blog.keanulee.com/2014/10/20/the-tale-of-three-spinners.html
+		*/
+  position: relative;
+  width: 7px;
+  height: 14px;
+  overflow: hidden; }
+
+.pswp--css_animation .pswp__preloader__donut {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #FFF;
+  border-radius: 50%;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: none;
+  margin: 0; }
+
+@media screen and (max-width: 1024px) {
+  .pswp__preloader {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin: 0;
+    float: right; } }
+
+@-webkit-keyframes clockwise {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+@keyframes clockwise {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+@-webkit-keyframes donut-rotate {
+  0% {
+    -webkit-transform: rotate(0);
+            transform: rotate(0); }
+  50% {
+    -webkit-transform: rotate(-140deg);
+            transform: rotate(-140deg); }
+  100% {
+    -webkit-transform: rotate(0);
+            transform: rotate(0); } }
+
+@keyframes donut-rotate {
+  0% {
+    -webkit-transform: rotate(0);
+            transform: rotate(0); }
+  50% {
+    -webkit-transform: rotate(-140deg);
+            transform: rotate(-140deg); }
+  100% {
+    -webkit-transform: rotate(0);
+            transform: rotate(0); } }
+
+/*
+	
+	6. Additional styles
+
+ */
+/* root element of UI */
+.pswp__ui {
+  -webkit-font-smoothing: auto;
+  visibility: visible;
+  opacity: 1;
+  z-index: 1550; }
+
+/* top black bar with buttons and "1 of X" indicator */
+.pswp__top-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 44px;
+  width: 100%; }
+
+.pswp__caption,
+.pswp__top-bar,
+.pswp--has_mouse .pswp__button--arrow--left,
+.pswp--has_mouse .pswp__button--arrow--right {
+  -webkit-backface-visibility: hidden;
+  will-change: opacity;
+  -webkit-transition: opacity 333ms cubic-bezier(0.4, 0, 0.22, 1);
+          transition: opacity 333ms cubic-bezier(0.4, 0, 0.22, 1); }
+
+/* pswp--has_mouse class is added only when two subsequent mousemove events occur */
+.pswp--has_mouse .pswp__button--arrow--left,
+.pswp--has_mouse .pswp__button--arrow--right {
+  visibility: visible; }
+
+.pswp__top-bar,
+.pswp__caption {
+  background-color: rgba(0, 0, 0, 0.5); }
+
+/* pswp__ui--fit class is added when main image "fits" between top bar and bottom bar (caption) */
+.pswp__ui--fit .pswp__top-bar,
+.pswp__ui--fit .pswp__caption {
+  background-color: rgba(0, 0, 0, 0.3); }
+
+/* pswp__ui--idle class is added when mouse isn't moving for several seconds (JS option timeToIdle) */
+.pswp__ui--idle .pswp__top-bar {
+  opacity: 0; }
+
+.pswp__ui--idle .pswp__button--arrow--left,
+.pswp__ui--idle .pswp__button--arrow--right {
+  opacity: 0; }
+
+/*
+	pswp__ui--hidden class is added when controls are hidden
+	e.g. when user taps to toggle visibility of controls
+*/
+.pswp__ui--hidden .pswp__top-bar,
+.pswp__ui--hidden .pswp__caption,
+.pswp__ui--hidden .pswp__button--arrow--left,
+.pswp__ui--hidden .pswp__button--arrow--right {
+  /* Force paint & create composition layer for controls. */
+  opacity: 0.001; }
+
+/* pswp__ui--one-slide class is added when there is just one item in gallery */
+.pswp__ui--one-slide .pswp__button--arrow--left,
+.pswp__ui--one-slide .pswp__button--arrow--right,
+.pswp__ui--one-slide .pswp__counter {
+  display: none; }
+
+.pswp__element--disabled {
+  display: none !important; }
+
+.pswp--minimal--dark .pswp__top-bar {
+  background: none; }
+
+
+/* line 5, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.pswp{z-index:9999999}/* line 9, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery{position:relative;margin-top:2em}/* line 13, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery *,.natural-gallery *::after,.natural-gallery *::before{box-sizing:border-box;margin:0;padding:0}/* line 21, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery iframe{position:absolute;width:100%;height:0;top:0;left:0;background-color:transparent;border:0}/* line 35, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body{padding:0;margin:0}/* line 39, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body::after{content:'';display:block;clear:both}/* line 45, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body .natural-gallery-noresults{margin:3em auto 2em;width:100px;height:100px;text-align:center;font-weight:bold;font-size:15px;color:#888888}/* line 55, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body .natural-gallery-thumbnail img{box-shadow:3px 3px 5px #999999;text-align:center;will-change:opacity}/* line 61, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body figure{position:relative;display:block;float:left;overflow:hidden;margin:0}/* line 68, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body figure:hover>span.hover{padding:10px;max-height:100px}/* line 73, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body figure.loading::before{content:"";position:absolute;z-index:990;top:50%;left:50%;border-radius:50%;transform:translate(-50%, -50%);animation-name:loading;animation-duration:2s;animation-delay:0.2s;animation-iteration-count:1;animation-fill-mode:forwards;animation-timing-function:ease-out;will-change:width, height, opacity}/* line 90, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body figure.loaded.visible>a{opacity:1;transition:1s ease-out opacity}/* line 95, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body figure>a{display:block;position:relative;z-index:100;opacity:0;background-repeat:no-repeat;background-position:center center;background-size:cover}/* line 105, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body figure>span{position:absolute;bottom:0;left:0;right:0;z-index:1100;background:rgba(0,0,0,0.6);text-align:center;color:white;font-size:14px;line-height:2em;padding:10px;transition:0.2s ease all;overflow:hidden}/* line 120, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-body figure>span.hover{padding:0 10px;max-height:0}/* line 132, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header{margin:0 0 10px 0}/* line 135, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header::after{content:'';display:block;clear:both}/* line 142, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm>svg{width:1.4em;height:1.4em;top:0.4em}/* line 147, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input{border:none;background:none}/* line 156, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-categories input[type=checkbox]{display:none}/* line 160, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-categories label{position:relative;cursor:pointer}/* line 165, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-categories .label{margin-left:1.5em;margin-right:5px}/* line 172, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .sectionContainer{margin-top:30px;position:relative}/* line 177, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm,.natural-gallery .natural-gallery-header .natural-gallery-categories label,.natural-gallery .natural-gallery-header .natural-gallery-categories{float:left;margin-right:5px}/* line 185, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm>svg,.natural-gallery .natural-gallery-header .natural-gallery-categories .label>svg,.natural-gallery .natural-gallery-header .natural-gallery-images>svg{content:"";float:left;position:absolute;left:5px;font-size:16px;background-repeat:no-repeat}/* line 197, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-categories .label>svg,.natural-gallery .natural-gallery-header .natural-gallery-images>svg{width:1.2em;height:1.2em;top:0.5em}/* line 204, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input,.natural-gallery .natural-gallery-header .natural-gallery-searchTerm .sectionName,.natural-gallery .natural-gallery-header .natural-gallery-categories .label,.natural-gallery .natural-gallery-header .natural-gallery-images{display:block;padding:9px 5px 6px;font-size:16px;line-height:1.3em;height:35px}/* line 215, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-images{float:right;margin-right:0;margin-left:5px;padding-left:2em}/* line 222, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input,.natural-gallery .natural-gallery-header .natural-gallery-categories .label{font-weight:normal}/* line 227, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input{width:300px;padding-left:2em}/* line 232, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input:focus{outline:none}/* line 237, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .sectionName,.natural-gallery .natural-gallery-header .natural-gallery-categories label{margin-bottom:0}/* line 242, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .sectionName{left:5px;top:0;margin-left:1.5em;font-size:16px;font-weight:normal;position:absolute;pointer-events:none;transition:0.2s ease all}/* line 254, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-images .sectionName,.natural-gallery .natural-gallery-header .natural-gallery-categories .sectionName,.natural-gallery .natural-gallery-header .natural-gallery-searchTerm:hover .sectionName,.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input:focus ~ .sectionName,.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input:valid ~ .sectionName{top:-2.2em;font-size:14px !important;line-height:1em;padding:0;margin:1.2em 0 0 0}/* line 266, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-categories .sectionName:last-child{display:none}/* line 272, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm,.natural-gallery .natural-gallery-header .natural-gallery-categories label,.natural-gallery .natural-gallery-header .natural-gallery-images{border:none;border-bottom-width:1px;border-bottom-style:solid}/* line 280, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .bar{position:relative;display:block}/* line 285, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .bar::before,.natural-gallery .natural-gallery-header .bar::after{content:'';height:3px;width:0;bottom:-2px;position:absolute;transition:0.2s ease all}/* line 295, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .bar::before{left:50%}/* line 299, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .bar::after{right:50%}/* line 304, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input:focus ~ .bar::before,.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input:focus ~ .bar::after,.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input:valid ~ .bar::before,.natural-gallery .natural-gallery-header .natural-gallery-searchTerm input:valid ~ .bar::after,.natural-gallery .natural-gallery-header .natural-gallery-categories input[type=checkbox]:checked ~ .bar::before,.natural-gallery .natural-gallery-header .natural-gallery-categories input[type=checkbox]:checked ~ .bar::after{width:50%}/* line 319, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-next{display:block;margin:10px auto;text-align:center;height:30px}/* line 325, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-next svg{cursor:pointer;font-size:16px;height:inherit}/* line 331, /Users/sam/sites/natural-gallery.lan/app/styles/natural-gallery.scss */.natural-gallery .natural-gallery-next::after{content:'';display:block;clear:both}@keyframes loading{0%{width:0px;height:0px;opacity:0.3}100%{width:700px;height:700px;opacity:0.05}}
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm5hdHVyYWwtZ2FsbGVyeS5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsa0ZBQWtGLE1BQU0sZUFBZSxDQUFDLGtGQUFrRixpQkFBaUIsa0JBQWtCLGNBQWMsQ0FBQyxtRkFBbUYsd0VBQXdFLHNCQUFzQixTQUFTLFNBQVMsQ0FBQyxtRkFBbUYsd0JBQXdCLGtCQUFrQixXQUFXLFNBQVMsTUFBTSxPQUFPLDZCQUE2QixRQUFRLENBQUMsbUZBQW1GLHVDQUF1QyxVQUFVLFFBQVEsQ0FBQyxtRkFBbUYsOENBQThDLFdBQVcsY0FBYyxVQUFVLENBQUMsbUZBQW1GLGtFQUFrRSxvQkFBb0IsWUFBWSxhQUFhLGtCQUFrQixpQkFBaUIsZUFBZSxhQUFhLENBQUMsbUZBQW1GLHNFQUFzRSwrQkFBK0Isa0JBQWtCLG1CQUFtQixDQUFDLG1GQUFtRiw4Q0FBOEMsa0JBQWtCLGNBQWMsV0FBVyxnQkFBZ0IsUUFBUSxDQUFDLG1GQUFtRiwrREFBK0QsYUFBYSxnQkFBZ0IsQ0FBQyxtRkFBbUYsOERBQThELFdBQVcsa0JBQWtCLFlBQVksUUFBUSxTQUFTLGtCQUFrQixnQ0FBZ0MsdUJBQXVCLHNCQUFzQixxQkFBcUIsNEJBQTRCLDZCQUE2QixtQ0FBbUMsa0NBQWtDLENBQUMsbUZBQW1GLCtEQUErRCxVQUFVLDhCQUE4QixDQUFDLG1GQUFtRixnREFBZ0QsY0FBYyxrQkFBa0IsWUFBWSxVQUFVLDRCQUE0QixrQ0FBa0MscUJBQXFCLENBQUMsb0ZBQW9GLG1EQUFtRCxrQkFBa0IsU0FBUyxPQUFPLFFBQVEsYUFBYSwyQkFBMkIsa0JBQWtCLFlBQVksZUFBZSxnQkFBZ0IsYUFBYSx5QkFBeUIsZUFBZSxDQUFDLG9GQUFvRix5REFBeUQsZUFBZSxZQUFZLENBQUMsb0ZBQW9GLHlDQUF5QyxpQkFBaUIsQ0FBQyxvRkFBb0YsZ0RBQWdELFdBQVcsY0FBYyxVQUFVLENBQUMsb0ZBQW9GLHlFQUF5RSxZQUFZLGFBQWEsU0FBUyxDQUFDLG9GQUFvRiwyRUFBMkUsWUFBWSxlQUFlLENBQUMsb0ZBQW9GLDBGQUEwRixZQUFZLENBQUMsb0ZBQW9GLDJFQUEyRSxrQkFBa0IsY0FBYyxDQUFDLG9GQUFvRiw0RUFBNEUsa0JBQWtCLGdCQUFnQixDQUFDLG9GQUFvRiwyREFBMkQsZ0JBQWdCLGlCQUFpQixDQUFDLG9GQUFvRixxTkFBcU4sV0FBVyxnQkFBZ0IsQ0FBQyxvRkFBb0YsOE5BQThOLFdBQVcsV0FBVyxrQkFBa0IsU0FBUyxlQUFlLDJCQUEyQixDQUFDLG9GQUFvRixxSkFBcUosWUFBWSxhQUFhLFNBQVMsQ0FBQyxvRkFBb0YsMFNBQTBTLGNBQWMsb0JBQW9CLGVBQWUsa0JBQWtCLFdBQVcsQ0FBQyxvRkFBb0YsaUVBQWlFLFlBQVksZUFBZSxnQkFBZ0IsZ0JBQWdCLENBQUMsb0ZBQW9GLHVKQUF1SixrQkFBa0IsQ0FBQyxvRkFBb0YsMkVBQTJFLFlBQVksZ0JBQWdCLENBQUMsb0ZBQW9GLGlGQUFpRixZQUFZLENBQUMsb0ZBQW9GLGlJQUFpSSxlQUFlLENBQUMsb0ZBQW9GLHNEQUFzRCxTQUFTLE1BQU0sa0JBQWtCLGVBQWUsbUJBQW1CLGtCQUFrQixvQkFBb0Isd0JBQXdCLENBQUMsb0ZBQW9GLHdiQUF3YixXQUFXLDBCQUEwQixnQkFBZ0IsVUFBVSxrQkFBa0IsQ0FBQyxvRkFBb0YsNkZBQTZGLFlBQVksQ0FBQyxvRkFBb0YsaU5BQWlOLFlBQVksd0JBQXdCLHlCQUF5QixDQUFDLG9GQUFvRiw4Q0FBOEMsa0JBQWtCLGFBQWEsQ0FBQyxvRkFBb0YsMkdBQTJHLFdBQVcsV0FBVyxRQUFRLFlBQVksa0JBQWtCLHdCQUF3QixDQUFDLG9GQUFvRixzREFBc0QsUUFBUSxDQUFDLG9GQUFvRixxREFBcUQsU0FBUyxDQUFDLG9GQUFvRiwrbEJBQStsQixTQUFTLENBQUMsb0ZBQW9GLHVDQUF1QyxjQUFjLGlCQUFpQixrQkFBa0IsV0FBVyxDQUFDLG9GQUFvRiwyQ0FBMkMsZUFBZSxlQUFlLGNBQWMsQ0FBQyxvRkFBb0YsOENBQThDLFdBQVcsY0FBYyxVQUFVLENBQUMsbUJBQW1CLEdBQUcsVUFBVSxXQUFXLFdBQVcsQ0FBQyxLQUFLLFlBQVksYUFBYSxZQUFZLENBQUMsQ0FBQyIsImZpbGUiOiJzdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi8qIGxpbmUgNSwgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ucHN3cHt6LWluZGV4Ojk5OTk5OTl9LyogbGluZSA5LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnl7cG9zaXRpb246cmVsYXRpdmU7bWFyZ2luLXRvcDoyZW19LyogbGluZSAxMywgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5ICosLm5hdHVyYWwtZ2FsbGVyeSAqOjphZnRlciwubmF0dXJhbC1nYWxsZXJ5ICo6OmJlZm9yZXtib3gtc2l6aW5nOmJvcmRlci1ib3g7bWFyZ2luOjA7cGFkZGluZzowfS8qIGxpbmUgMjEsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSBpZnJhbWV7cG9zaXRpb246YWJzb2x1dGU7d2lkdGg6MTAwJTtoZWlnaHQ6MDt0b3A6MDtsZWZ0OjA7YmFja2dyb3VuZC1jb2xvcjp0cmFuc3BhcmVudDtib3JkZXI6MH0vKiBsaW5lIDM1LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1ib2R5e3BhZGRpbmc6MDttYXJnaW46MH0vKiBsaW5lIDM5LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1ib2R5OjphZnRlcntjb250ZW50OicnO2Rpc3BsYXk6YmxvY2s7Y2xlYXI6Ym90aH0vKiBsaW5lIDQ1LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1ib2R5IC5uYXR1cmFsLWdhbGxlcnktbm9yZXN1bHRze21hcmdpbjozZW0gYXV0byAyZW07d2lkdGg6MTAwcHg7aGVpZ2h0OjEwMHB4O3RleHQtYWxpZ246Y2VudGVyO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjE1cHg7Y29sb3I6Izg4ODg4OH0vKiBsaW5lIDU1LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1ib2R5IC5uYXR1cmFsLWdhbGxlcnktdGh1bWJuYWlsIGltZ3tib3gtc2hhZG93OjNweCAzcHggNXB4ICM5OTk5OTk7dGV4dC1hbGlnbjpjZW50ZXI7d2lsbC1jaGFuZ2U6b3BhY2l0eX0vKiBsaW5lIDYxLCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1ib2R5IGZpZ3VyZXtwb3NpdGlvbjpyZWxhdGl2ZTtkaXNwbGF5OmJsb2NrO2Zsb2F0OmxlZnQ7b3ZlcmZsb3c6aGlkZGVuO21hcmdpbjowfS8qIGxpbmUgNjgsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWJvZHkgZmlndXJlOmhvdmVyPnNwYW4uaG92ZXJ7cGFkZGluZzoxMHB4O21heC1oZWlnaHQ6MTAwcHh9LyogbGluZSA3MywgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktYm9keSBmaWd1cmUubG9hZGluZzo6YmVmb3Jle2NvbnRlbnQ6XCJcIjtwb3NpdGlvbjphYnNvbHV0ZTt6LWluZGV4Ojk5MDt0b3A6NTAlO2xlZnQ6NTAlO2JvcmRlci1yYWRpdXM6NTAlO3RyYW5zZm9ybTp0cmFuc2xhdGUoLTUwJSwgLTUwJSk7YW5pbWF0aW9uLW5hbWU6bG9hZGluZzthbmltYXRpb24tZHVyYXRpb246MnM7YW5pbWF0aW9uLWRlbGF5OjAuMnM7YW5pbWF0aW9uLWl0ZXJhdGlvbi1jb3VudDoxO2FuaW1hdGlvbi1maWxsLW1vZGU6Zm9yd2FyZHM7YW5pbWF0aW9uLXRpbWluZy1mdW5jdGlvbjplYXNlLW91dDt3aWxsLWNoYW5nZTp3aWR0aCwgaGVpZ2h0LCBvcGFjaXR5fS8qIGxpbmUgOTAsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWJvZHkgZmlndXJlLmxvYWRlZC52aXNpYmxlPmF7b3BhY2l0eToxO3RyYW5zaXRpb246MXMgZWFzZS1vdXQgb3BhY2l0eX0vKiBsaW5lIDk1LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1ib2R5IGZpZ3VyZT5he2Rpc3BsYXk6YmxvY2s7cG9zaXRpb246cmVsYXRpdmU7ei1pbmRleDoxMDA7b3BhY2l0eTowO2JhY2tncm91bmQtcmVwZWF0Om5vLXJlcGVhdDtiYWNrZ3JvdW5kLXBvc2l0aW9uOmNlbnRlciBjZW50ZXI7YmFja2dyb3VuZC1zaXplOmNvdmVyfS8qIGxpbmUgMTA1LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1ib2R5IGZpZ3VyZT5zcGFue3Bvc2l0aW9uOmFic29sdXRlO2JvdHRvbTowO2xlZnQ6MDtyaWdodDowO3otaW5kZXg6MTEwMDtiYWNrZ3JvdW5kOnJnYmEoMCwwLDAsMC42KTt0ZXh0LWFsaWduOmNlbnRlcjtjb2xvcjp3aGl0ZTtmb250LXNpemU6MTRweDtsaW5lLWhlaWdodDoyZW07cGFkZGluZzoxMHB4O3RyYW5zaXRpb246MC4ycyBlYXNlIGFsbDtvdmVyZmxvdzpoaWRkZW59LyogbGluZSAxMjAsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWJvZHkgZmlndXJlPnNwYW4uaG92ZXJ7cGFkZGluZzowIDEwcHg7bWF4LWhlaWdodDowfS8qIGxpbmUgMTMyLCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXJ7bWFyZ2luOjAgMCAxMHB4IDB9LyogbGluZSAxMzUsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlcjo6YWZ0ZXJ7Y29udGVudDonJztkaXNwbGF5OmJsb2NrO2NsZWFyOmJvdGh9LyogbGluZSAxNDIsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LXNlYXJjaFRlcm0+c3Zne3dpZHRoOjEuNGVtO2hlaWdodDoxLjRlbTt0b3A6MC40ZW19LyogbGluZSAxNDcsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LXNlYXJjaFRlcm0gaW5wdXR7Ym9yZGVyOm5vbmU7YmFja2dyb3VuZDpub25lfS8qIGxpbmUgMTU2LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1jYXRlZ29yaWVzIGlucHV0W3R5cGU9Y2hlY2tib3hde2Rpc3BsYXk6bm9uZX0vKiBsaW5lIDE2MCwgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktY2F0ZWdvcmllcyBsYWJlbHtwb3NpdGlvbjpyZWxhdGl2ZTtjdXJzb3I6cG9pbnRlcn0vKiBsaW5lIDE2NSwgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktY2F0ZWdvcmllcyAubGFiZWx7bWFyZ2luLWxlZnQ6MS41ZW07bWFyZ2luLXJpZ2h0OjVweH0vKiBsaW5lIDE3MiwgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5zZWN0aW9uQ29udGFpbmVye21hcmdpbi10b3A6MzBweDtwb3NpdGlvbjpyZWxhdGl2ZX0vKiBsaW5lIDE3NywgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktc2VhcmNoVGVybSwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktY2F0ZWdvcmllcyBsYWJlbCwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktY2F0ZWdvcmllc3tmbG9hdDpsZWZ0O21hcmdpbi1yaWdodDo1cHh9LyogbGluZSAxODUsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LXNlYXJjaFRlcm0+c3ZnLC5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1jYXRlZ29yaWVzIC5sYWJlbD5zdmcsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LWltYWdlcz5zdmd7Y29udGVudDpcIlwiO2Zsb2F0OmxlZnQ7cG9zaXRpb246YWJzb2x1dGU7bGVmdDo1cHg7Zm9udC1zaXplOjE2cHg7YmFja2dyb3VuZC1yZXBlYXQ6bm8tcmVwZWF0fS8qIGxpbmUgMTk3LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1jYXRlZ29yaWVzIC5sYWJlbD5zdmcsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LWltYWdlcz5zdmd7d2lkdGg6MS4yZW07aGVpZ2h0OjEuMmVtO3RvcDowLjVlbX0vKiBsaW5lIDIwNCwgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktc2VhcmNoVGVybSBpbnB1dCwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktc2VhcmNoVGVybSAuc2VjdGlvbk5hbWUsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LWNhdGVnb3JpZXMgLmxhYmVsLC5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1pbWFnZXN7ZGlzcGxheTpibG9jaztwYWRkaW5nOjlweCA1cHggNnB4O2ZvbnQtc2l6ZToxNnB4O2xpbmUtaGVpZ2h0OjEuM2VtO2hlaWdodDozNXB4fS8qIGxpbmUgMjE1LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1pbWFnZXN7ZmxvYXQ6cmlnaHQ7bWFyZ2luLXJpZ2h0OjA7bWFyZ2luLWxlZnQ6NXB4O3BhZGRpbmctbGVmdDoyZW19LyogbGluZSAyMjIsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LXNlYXJjaFRlcm0gaW5wdXQsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LWNhdGVnb3JpZXMgLmxhYmVse2ZvbnQtd2VpZ2h0Om5vcm1hbH0vKiBsaW5lIDIyNywgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktc2VhcmNoVGVybSBpbnB1dHt3aWR0aDozMDBweDtwYWRkaW5nLWxlZnQ6MmVtfS8qIGxpbmUgMjMyLCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1zZWFyY2hUZXJtIGlucHV0OmZvY3Vze291dGxpbmU6bm9uZX0vKiBsaW5lIDIzNywgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5zZWN0aW9uTmFtZSwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktY2F0ZWdvcmllcyBsYWJlbHttYXJnaW4tYm90dG9tOjB9LyogbGluZSAyNDIsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAuc2VjdGlvbk5hbWV7bGVmdDo1cHg7dG9wOjA7bWFyZ2luLWxlZnQ6MS41ZW07Zm9udC1zaXplOjE2cHg7Zm9udC13ZWlnaHQ6bm9ybWFsO3Bvc2l0aW9uOmFic29sdXRlO3BvaW50ZXItZXZlbnRzOm5vbmU7dHJhbnNpdGlvbjowLjJzIGVhc2UgYWxsfS8qIGxpbmUgMjU0LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1pbWFnZXMgLnNlY3Rpb25OYW1lLC5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1jYXRlZ29yaWVzIC5zZWN0aW9uTmFtZSwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktc2VhcmNoVGVybTpob3ZlciAuc2VjdGlvbk5hbWUsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LXNlYXJjaFRlcm0gaW5wdXQ6Zm9jdXMgfiAuc2VjdGlvbk5hbWUsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LXNlYXJjaFRlcm0gaW5wdXQ6dmFsaWQgfiAuc2VjdGlvbk5hbWV7dG9wOi0yLjJlbTtmb250LXNpemU6MTRweCAhaW1wb3J0YW50O2xpbmUtaGVpZ2h0OjFlbTtwYWRkaW5nOjA7bWFyZ2luOjEuMmVtIDAgMCAwfS8qIGxpbmUgMjY2LCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1jYXRlZ29yaWVzIC5zZWN0aW9uTmFtZTpsYXN0LWNoaWxke2Rpc3BsYXk6bm9uZX0vKiBsaW5lIDI3MiwgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktc2VhcmNoVGVybSwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktY2F0ZWdvcmllcyBsYWJlbCwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktaW1hZ2Vze2JvcmRlcjpub25lO2JvcmRlci1ib3R0b20td2lkdGg6MXB4O2JvcmRlci1ib3R0b20tc3R5bGU6c29saWR9LyogbGluZSAyODAsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAuYmFye3Bvc2l0aW9uOnJlbGF0aXZlO2Rpc3BsYXk6YmxvY2t9LyogbGluZSAyODUsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAuYmFyOjpiZWZvcmUsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAuYmFyOjphZnRlcntjb250ZW50OicnO2hlaWdodDozcHg7d2lkdGg6MDtib3R0b206LTJweDtwb3NpdGlvbjphYnNvbHV0ZTt0cmFuc2l0aW9uOjAuMnMgZWFzZSBhbGx9LyogbGluZSAyOTUsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAuYmFyOjpiZWZvcmV7bGVmdDo1MCV9LyogbGluZSAyOTksIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAuYmFyOjphZnRlcntyaWdodDo1MCV9LyogbGluZSAzMDQsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LXNlYXJjaFRlcm0gaW5wdXQ6Zm9jdXMgfiAuYmFyOjpiZWZvcmUsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LXNlYXJjaFRlcm0gaW5wdXQ6Zm9jdXMgfiAuYmFyOjphZnRlciwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktc2VhcmNoVGVybSBpbnB1dDp2YWxpZCB+IC5iYXI6OmJlZm9yZSwubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktaGVhZGVyIC5uYXR1cmFsLWdhbGxlcnktc2VhcmNoVGVybSBpbnB1dDp2YWxpZCB+IC5iYXI6OmFmdGVyLC5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1oZWFkZXIgLm5hdHVyYWwtZ2FsbGVyeS1jYXRlZ29yaWVzIGlucHV0W3R5cGU9Y2hlY2tib3hdOmNoZWNrZWQgfiAuYmFyOjpiZWZvcmUsLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LWhlYWRlciAubmF0dXJhbC1nYWxsZXJ5LWNhdGVnb3JpZXMgaW5wdXRbdHlwZT1jaGVja2JveF06Y2hlY2tlZCB+IC5iYXI6OmFmdGVye3dpZHRoOjUwJX0vKiBsaW5lIDMxOSwgL1VzZXJzL3NhbS9zaXRlcy9uYXR1cmFsLWdhbGxlcnkubGFuL2FwcC9zdHlsZXMvbmF0dXJhbC1nYWxsZXJ5LnNjc3MgKi8ubmF0dXJhbC1nYWxsZXJ5IC5uYXR1cmFsLWdhbGxlcnktbmV4dHtkaXNwbGF5OmJsb2NrO21hcmdpbjoxMHB4IGF1dG87dGV4dC1hbGlnbjpjZW50ZXI7aGVpZ2h0OjMwcHh9LyogbGluZSAzMjUsIC9Vc2Vycy9zYW0vc2l0ZXMvbmF0dXJhbC1nYWxsZXJ5Lmxhbi9hcHAvc3R5bGVzL25hdHVyYWwtZ2FsbGVyeS5zY3NzICovLm5hdHVyYWwtZ2FsbGVyeSAubmF0dXJhbC1nYWxsZXJ5LW5leHQgc3Zne2N1cnNvcjpwb2ludGVyO2ZvbnQtc2l6ZToxNnB4O2hlaWdodDppbmhlcml0fS8qIGxpbmUgMzMxLCAvVXNlcnMvc2FtL3NpdGVzL25hdHVyYWwtZ2FsbGVyeS5sYW4vYXBwL3N0eWxlcy9uYXR1cmFsLWdhbGxlcnkuc2NzcyAqLy5uYXR1cmFsLWdhbGxlcnkgLm5hdHVyYWwtZ2FsbGVyeS1uZXh0OjphZnRlcntjb250ZW50OicnO2Rpc3BsYXk6YmxvY2s7Y2xlYXI6Ym90aH1Aa2V5ZnJhbWVzIGxvYWRpbmd7MCV7d2lkdGg6MHB4O2hlaWdodDowcHg7b3BhY2l0eTowLjN9MTAwJXt3aWR0aDo3MDBweDtoZWlnaHQ6NzAwcHg7b3BhY2l0eTowLjA1fX1cbiJdfQ== */
+
+
+/*
+ * Colors
+ * -----------------------------------------
+ */
+
+.natural-gallery .natural-gallery-body figure.loading::before,
+.natural-gallery .bar::before,
+.natural-gallery .bar::after {
+    background-color: #0089e0 !important;
+}
+
+/* Inactive */
+.natural-gallery .natural-gallery-searchTerm,
+.natural-gallery .natural-gallery-categories label,
+.natural-gallery .natural-gallery-images {
+    border-bottom-color: #999999 !important;
+}
+
+/* Disabled */
+.natural-gallery .sectionName,
+.natural-gallery .natural-gallery-categories .label,
+.natural-gallery .natural-gallery-categories input[type=checkbox] ~ .label svg,
+.natural-gallery .natural-gallery-noresults svg {
+    color: #999999 !important;
+    fill: #999999 !important;
+}
+
+/* Normal */
+.natural-gallery .natural-gallery-searchTerm input,
+.natural-gallery .natural-gallery-categories input[type=checkbox]:checked ~ .label {
+    color: #444444 !important;
+}
+
+/* Highlighted */
+.natural-gallery .natural-gallery-next svg,
+.natural-gallery .natural-gallery-header svg,
+.natural-gallery .natural-gallery-categories input[type=checkbox]:checked,
+.natural-gallery .natural-gallery-categories label:hover .label,
+.natural-gallery .natural-gallery-categories:hover .sectionName,
+.natural-gallery .natural-gallery-searchTerm:hover .sectionName,
+.natural-gallery .natural-gallery-searchTerm:hover input,
+.natural-gallery .natural-gallery-searchTerm:hover .sectionName,
+.natural-gallery .natural-gallery-images:hover .sectionName {
+    color: #0089e0 !important;
+    fill: currentColor !important;
+}
+
+.natural-gallery .natural-gallery-categories input[type=checkbox]:checked ~ .label svg {
+    fill: #0089e0 !important;
+}
+
+.natural-gallery .natural-gallery-next:hover {
+    background-color: #eeeeee !important;
+}
+
+

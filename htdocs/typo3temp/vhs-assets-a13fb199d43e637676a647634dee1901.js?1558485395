@@ -1,0 +1,23 @@
+
+		
+			$(document).ready(function() {
+				$('#characterLeft').text('Encore 140 caractères.');
+				$('#message').keydown(function() {
+					var max = 140;
+					var len = $(this).val().length;
+					if (len >= max) {
+						$('#characterLeft').text('Vous avez atteint la limite');
+						$('#characterLeft').addClass('red');
+						$('#btnSubmit').addClass('disabled');
+					}
+					else {
+						var numberOfCharacters = max - len;
+						$('#characterLeft').text(numberOfCharacters + ' caractères encore possibles.');
+						$('#btnSubmit').removeClass('disabled');
+						$('#characterLeft').removeClass('red');
+					}
+				});
+			});
+		
+	
+
